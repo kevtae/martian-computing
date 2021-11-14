@@ -211,14 +211,14 @@ Most of the time, `++expect-eq` is the only arm used.  `++expect-fail` works a b
 
 `|.` bardot is like `|-` barhep but defers evaluation instead.  Here we are using it to evaluate the expected failure later than compilation time.
 
-- Optional Reading: [Tlon Corporation, "Unit Testing with Ford"](https://web.archive.org/web/20200614210451/https://urbit.org/docs/tutorials/hoon/test-sets/)
+- Optional Reading: [Tlon Corporation, "Unit Testing with Ford"](https://web.archive.org/web/20200614210451/https://urbit.org/docs/hoon/hoon-school/test-sets/)
 
 ![](../img/10-header-stars-2.png)
 
 
 ##  Hoon Style
 
-It's time for you to read and absorb the [authoritative Hoon style guide](https://urbit.org/docs/tutorials/hoon/style/).  All code you produce subsequently should hew to it, particularly the informal comments.  (It will take us a while yet in this course to get to the point where formal comments are worth the trouble.)
+It's time for you to read and absorb the [authoritative Hoon style guide](https://urbit.org/docs/hoon/hoon-school/style/).  All code you produce subsequently should hew to it, particularly the informal comments.  (It will take us a while yet in this course to get to the point where formal comments are worth the trouble.)
 
 It's worth noting that I have a few minor quibbles on style:
 
@@ -251,7 +251,7 @@ For instance, here are samples from some library code I have written, which adhe
 
 How would you rewrite these code snippets in fully-compliant style?
 
-- Reading: [Tlon Corporation, "Hoon Style Guide"](https://urbit.org/docs/tutorials/hoon/style/)
+- Reading: [Tlon Corporation, "Hoon Style Guide"](https://urbit.org/docs/hoon/hoon-school/style/)
 
 
 ##  A Word of Encouragement

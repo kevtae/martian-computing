@@ -172,7 +172,7 @@ If you wanted to write a file from a generator into `%clay`, you have two option
 
     (as seen in `publish.hoon`'s `++write-file` arm).
 
-- Optional Reading: [Tlon Corporation, "Clay Tutorial"](https://urbit.org/docs/tutorials/hoon/hoon-school/clay/) (outdated; okay on high-level concepts but no longer on technical details; e.g., kisses are now just moves)
+- Optional Reading: [Tlon Corporation, "Clay Tutorial"](https://urbit.org/docs/hoon/hoon-school/hoon-school/clay/) (outdated; okay on high-level concepts but no longer on technical details; e.g., kisses are now just moves)
 - Optional Reading: [Curtis Yarvin `~sorreg-namtyv`, "Toward a New Clay"](https://urbit.org/blog/toward-a-new-clay/) (same caveats)
 - Optional Reading: [`clay.hoon`](https://github.com/urbit/urbit/blob/master/pkg/arvo/sys/vane/clay.hoon)
 
