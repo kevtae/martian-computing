@@ -1,14 +1,13 @@
-#   Polymorphism
+# Polymorphism
 
 ![](../img/23-header-mccall-0.png)
 
-##  Learning Objectives
+## Learning Objectives
 
--   Distinguish wet and dry cores.
--   Apply type constructor arms.
+- Distinguish wet and dry cores.
+- Apply type constructor arms.
 
-
-##  Wet Gates
+## Wet Gates
 
 ![](../img/23-header-mccall-1.png)
 
@@ -17,7 +16,7 @@
 - Dry gate = type analysis at the call site
 - Wet gate = type analysis at the gate definition
 
-Wet gates are more general than dry gates:  you can use a wet gate anywhere a dry gate would work.  Wet gates are created with [`|*` bartar](https://urbit.org/docs/reference/hoon-expressions/rune/bar/#bartar).  Wet gates behave more like a C-style macro because the argument isn't converted into the sample type but directly present.
+Wet gates are more general than dry gates: you can use a wet gate anywhere a dry gate would work. Wet gates are created with [`|*` bartar](https://urbit.org/docs/reference/hoon-expressions/rune/bar/#bartar). Wet gates behave more like a C-style macro because the argument isn't converted into the sample type but directly present.
 
 ```hoon
 > =dry |=([a=* b=*] [b a])
@@ -28,9 +27,9 @@ Wet gates are more general than dry gates:  you can use a wet gate anywhere a dr
 [.~~~1 .~1]
 ```
 
-> It is good practice to include a cast in all gates, even wet gates.  But in many cases the desired output type depends on the input type. How can we cast appropriately?  Often we can cast by example, using the input values themselves.  (`^+`)
+> It is good practice to include a cast in all gates, even wet gates. But in many cases the desired output type depends on the input type. How can we cast appropriately? Often we can cast by example, using the input values themselves. (`^+`)
 
-Thus for gates.  More generally, what about cores?  First, a definition of the `core` type:
+Thus for gates. More generally, what about cores? First, a definition of the `core` type:
 
 ```hoon
 [$core p=type q=coil]
@@ -51,28 +50,27 @@ Now for dry cores:
 
 > Dry polymorphism works by substituting cores. Typically, the the programmer uses one core as an interface definition, then replaces it with another core which does something useful.
 
-In contrast, for wet cores[:](https://en.wikipedia.org/wiki/%C3%96rt%C3%B6%C3%B6)  <!-- egg -->
+In contrast, for wet cores[:](https://en.wikipedia.org/wiki/%C3%96rt%C3%B6%C3%B6) <!-- egg -->
 
-> For a wet arm, we ask: "suppose this core was actually compiled using `p` instead of `q.q`?" Would the Nock formula we generated for q.q actually work for a `p` payload?  … We don't actually recompile the arm at runtime. We actually run the formula generated for the original payload, `q.q`.
+> For a wet arm, we ask: "suppose this core was actually compiled using `p` instead of `q.q`?" Would the Nock formula we generated for q.q actually work for a `p` payload? … We don't actually recompile the arm at runtime. We actually run the formula generated for the original payload, `q.q`.
 
-As a consequence, wet arms and wet cores behave a bit like C++ overloaded operators and templates or Haskell typeclasses.  There aren't fully different implementations though (as in C++ overloading), though, so there's not a way to (for instance) just make `++add` and `++add:rs` compatible.  (The "Lead Polymorphism" tutorial is very important in this regard.)
+As a consequence, wet arms and wet cores behave a bit like C++ overloaded operators and templates or Haskell typeclasses. There aren't fully different implementations though (as in C++ overloading), though, so there's not a way to (for instance) just make `++add` and `++add:rs` compatible. (The "Lead Polymorphism" tutorial is very important in this regard.)
 
-One thing to watch is that `|%` barcen produces dry cores, thus dry arms.  To produce a wet core, you need to use [`|@` barpat](https://urbit.org/docs/reference/hoon-expressions/rune/bar/#barpat) instead.
+One thing to watch is that `|%` barcen produces dry cores, thus dry arms. To produce a wet core, you need to use [`|@` barpat](https://urbit.org/docs/reference/hoon-expressions/rune/bar/#barpat) instead.
 
 - Reading: [Tlon Corporation, "Advanced Types"](https://urbit.org/docs/reference/hoon-expressions/advanced/)
-- Reading: [Tlon Corporation, "Iron Polymorphism"](https://urbit.org/docs/tutorials/hoon/hoon-school/iron-polymorphism/)
-- Reading: [Tlon Corporation, "Lead Polymorphism"](https://urbit.org/docs/tutorials/hoon/hoon-school/lead-polymorphism/) <!-- TODO move -->
+- Reading: [Tlon Corporation, "Iron Polymorphism"](https://urbit.org/docs/hoon/hoon-school/hoon-school/iron-polymorphism/)
+- Reading: [Tlon Corporation, "Lead Polymorphism"](https://urbit.org/docs/hoon/hoon-school/hoon-school/lead-polymorphism/) <!-- TODO move -->
 
-
-##  Type Constructors
+## Type Constructors
 
 ![](../img/23-header-mccall-2.png)
 
-Gall apps frequently require type definitions, customarily located in a `|%` barcen core before the `|_` barcab door.  Frequently these are defined and validated using type constructor arms.
+Gall apps frequently require type definitions, customarily located in a `|%` barcen core before the `|_` barcab door. Frequently these are defined and validated using type constructor arms.
 
-[`+$` lusbuc](https://urbit.org/docs/reference/hoon-expressions/rune/lus/#lusbuc) is a type constructor arm.  It defines a custom type for use by the other arms in the core.  It is sometimes used with the [`$%` buccen](https://urbit.org/docs/reference/hoon-expressions/rune/buc/#buccen) union definition rune (irregular form `?(%foo %bar)`).
+[`+$` lusbuc](https://urbit.org/docs/reference/hoon-expressions/rune/lus/#lusbuc) is a type constructor arm. It defines a custom type for use by the other arms in the core. It is sometimes used with the [`$%` buccen](https://urbit.org/docs/reference/hoon-expressions/rune/buc/#buccen) union definition rune (irregular form `?(%foo %bar)`).
 
-Let's imagine a Pokémon type.  We'll use a simple model of Pokémon with uniform capabilities by species (evolution, kind, whatever) but per-instance attributes for hit points, attack, etc.
+Let's imagine a Pokémon type. We'll use a simple model of Pokémon with uniform capabilities by species (evolution, kind, whatever) but per-instance attributes for hit points, attack, etc.
 
 ```hoon
 +$  pokemon
@@ -92,13 +90,13 @@ Let's imagine a Pokémon type.  We'll use a simple model of Pokémon with unifor
   ==
 ```
 
-We need to know what a `species` is, what a `type` is, and what an `move` is.  Clearly these are limited to be chosen from a particular set of options.  For instance, here is a `type` definition (in the Pokémon type sense):
+We need to know what a `species` is, what a `type` is, and what an `move` is. Clearly these are limited to be chosen from a particular set of options. For instance, here is a `type` definition (in the Pokémon type sense):
 
 ```hoon
 +$  type  ?(%bug %dragon %ice %fighting %fire %flying %grass %ghost %ground %electric %normal %poison %psychic %rock %water)
 ```
 
-Now, we have a bit of a problem, which is that these types really aren't disjoint.  That is, a Pokémon may have more than one of them.  So _really_ what we want isn't a _type_ in the Hoon sense, but a `set` of tags.  ("`$?` should only be used on types that are disjoint, i.e., which have no values in common.")  The same goes for `move`.
+Now, we have a bit of a problem, which is that these types really aren't disjoint. That is, a Pokémon may have more than one of them. So _really_ what we want isn't a _type_ in the Hoon sense, but a `set` of tags. ("`$?` should only be used on types that are disjoint, i.e., which have no values in common.") The same goes for `move`.
 
 `+$` is a type constructor arm, so it doesn't make sense to define a particular `pokemon` until one has already defined a `species`, which needs `type` (as above) and `move`:
 
@@ -108,7 +106,7 @@ Now, we have a bit of a problem, which is that these types really aren't disjoin
 =/  eevee  [%eevee `(set @tas)`(sy `(list @tas)`~[%normal]) `(set @tas)`(sy `(list @tas)`~[%growl %body-slam])]
 ```
 
-(More realistically, we would load these from a configuration file like a JSON.  We leave that exercise to the reader for the time being.)
+(More realistically, we would load these from a configuration file like a JSON. We leave that exercise to the reader for the time being.)
 
 Now we're ready to build a unique Pokémon instance:
 
@@ -119,17 +117,16 @@ Now we're ready to build a unique Pokémon instance:
 
 [Here is a full implementation of the above as a single generator.](../resources/pokemon.hoon)
 
-- Reading: [Tlon Corporation, "Structures and Complex Types"](https://urbit.org/docs/tutorials/hoon/hoon-school/structures-and-complex-types/)
-- Reading: [Tlon Corporation, "Type Polymorphism"](https://urbit.org/docs/tutorials/hoon/hoon-school/type-polymorphism/)
+- Reading: [Tlon Corporation, "Structures and Complex Types"](https://urbit.org/docs/hoon/hoon-school/hoon-school/structures-and-complex-types/)
+- Reading: [Tlon Corporation, "Type Polymorphism"](https://urbit.org/docs/hoon/hoon-school/hoon-school/type-polymorphism/)
 
 _All art by Robert McCall._
 
+# Questions
 
-#   Questions
+## The Trapezoid Rule
 
-##  The Trapezoid Rule
-
-The [trapezoid rule](https://en.wikipedia.org/wiki/Trapezoidal_rule) solves a definite integral.  It approximates the area under the curve by a trapezoid or (commonly) a series of trapezoids.
+The [trapezoid rule](https://en.wikipedia.org/wiki/Trapezoidal_rule) solves a definite integral. It approximates the area under the curve by a trapezoid or (commonly) a series of trapezoids.
 
 ![](https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Integration_num_trapezes_notation.svg/573px-Integration_num_trapezes_notation.svg.png)
 
@@ -141,6 +138,6 @@ $$
 \tfrac{\Delta x}{2}\left(f(x_0) + 2f(x_1)+2f(x_2)+ 2f(x_3)+2f(x_4)+\cdots+2f(x_{N-1}) + f(x_N)\right)
 $$
 
-Produce a trapezoid-rule integrator which accepts a wet gate (function of a single variable) and a list of points and yields the integral as a floating-point value (`@rs` or `@rd`).  This tool should be a library.  You may use the Dojo or a generator to apply it.
+Produce a trapezoid-rule integrator which accepts a wet gate (function of a single variable) and a list of points and yields the integral as a floating-point value (`@rs` or `@rd`). This tool should be a library. You may use the Dojo or a generator to apply it.
 
 Submit your library as a file `trapezint.hoon`.

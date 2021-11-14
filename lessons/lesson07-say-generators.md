@@ -1,17 +1,16 @@
-#   `%say` Generators
+# `%say` Generators
 
 ![](../img/07-header-apollo-1.png)
 
-##  Learning Objectives
+## Learning Objectives
 
--   Create a `%say` generator.
+- Create a `%say` generator.
 
+## Generators
 
-##  Generators
+Recall that a generator is a nonpersistent computation. You previously worked with naked generators, but there were other kinds hinted at then. The next of these is a `%say` generator. This has, over and beyond a naked generator, metadata including `context` for the generator.
 
-Recall that a generator is a nonpersistent computation.  You previously worked with naked generators, but there were other kinds hinted at then.  The next of these is a `%say` generator.  This has, over and beyond a naked generator, metadata including `context` for the generator.
-
-In brief, a naked generator knows about nothing except libraries explicitly imported, not even Arvo.  (Think of it as a C program with no `#include` statements.)  What we may call "clad" generators do know about Arvo and are able to leverage information from and about the operating system in performing their calculations.
+In brief, a naked generator knows about nothing except libraries explicitly imported, not even Arvo. (Think of it as a C program with no `#include` statements.) What we may call "clad" generators do know about Arvo and are able to leverage information from and about the operating system in performing their calculations.
 
 A basic `%say` generator looks like this:
 
@@ -26,36 +25,35 @@ A basic `%say` generator looks like this:
 - `%` in front of text indicates a `@tas`-style constant
 - `*` is a mold matching any data type, atom or cell
 
-This generator can accept any input (`*`) or none at all.  It returns, in any case, `999`.
+This generator can accept any input (`*`) or none at all. It returns, in any case, `999`.
 
 To match a particular mold, you can specify from this table, with atoms expanding to the right as auras.
 
-| Shorthand | Mold |
-| --------- | ---- |
-| `*` | noun |
-| `@` | atom |
-| `^` | cell |
-| `?` | loobean |
-| `~` | null |
+| Shorthand | Mold    |
+| --------- | ------- |
+| `*`       | noun    |
+| `@`       | atom    |
+| `^`       | cell    |
+| `?`       | loobean |
+| `~`       | null    |
 
+The generator itself consists of a cell `[%say hoon]`, where `hoon` is the rest of the code. The `%say` metadata tag indicates to Arvo what the expected structure of the generator is _qua_ `%say` generator.
 
-The generator itself consists of a cell `[%say hoon]`, where `hoon` is the rest of the code.  The `%say` metadata tag indicates to Arvo what the expected structure of the generator is _qua_ `%say` generator.
-
-In general, a `%say` generator doesn't need a sample (input arguments) to complete:  Arvo can elide that if necessary[.](https://www.youtube.com/watch?v=iYdk1BsAI2M)  <!-- egg -->
+In general, a `%say` generator doesn't need a sample (input arguments) to complete: Arvo can elide that if necessary[.](https://www.youtube.com/watch?v=iYdk1BsAI2M) <!-- egg -->
 
 More generally, a `%say` generator
 
-The `sample` should be a 3-tuple:  `[[now eny beak] ~[unnamed arguments] ~[named arguments]]`.
+The `sample` should be a 3-tuple: `[[now eny beak] ~[unnamed arguments] ~[named arguments]]`.
 
-> `now` is the current time.  `eny` is 512 bits of entropy for seeding random number generators.  `beak` contains the current ship, desk, and case.
+> `now` is the current time. `eny` is 512 bits of entropy for seeding random number generators. `beak` contains the current ship, desk, and case.
 
 How do we leave things out?
 
-> Any of those pieces of data could be omitted by replacing part of the noun with * rather than giving them faces. For example, `[now=@da * bec=beak]` if we didn't want eny, or `[* * bec=beak]` if we only wanted `beak`.
+> Any of those pieces of data could be omitted by replacing part of the noun with _ rather than giving them faces. For example, `[now=@da _ bec=beak]`if we didn't want eny, or`[* * bec=beak]`if we only wanted`beak`.
 
 ### Now
 
-In Dojo, you can always produce the current time as an atom using `now`.  This is a Dojo convenience, however, and we need to bind `now` to a face if we want to use it inside of a generator.
+In Dojo, you can always produce the current time as an atom using `now`. This is a Dojo convenience, however, and we need to bind `now` to a face if we want to use it inside of a generator.
 
 Time in Urbit will be covered in Zuse.
 
@@ -63,19 +61,19 @@ Time in Urbit will be covered in Zuse.
 
 ![](../img/07-header-apollo-2.png)
 
-What is _entropy_?  [Computer entropy](https://en.wikipedia.org/wiki/Entropy_%28computing%29) is a hardware or behavior-based collection of device-independent randomness.  For instance, "The Linux kernel generates entropy from keyboard timings, mouse movements, and IDE timings and makes the random character data available to other operating system processes through the special files `/dev/random` and `/dev/urandom`."
+What is _entropy_? [Computer entropy](https://en.wikipedia.org/wiki/Entropy_%28computing%29) is a hardware or behavior-based collection of device-independent randomness. For instance, "The Linux kernel generates entropy from keyboard timings, mouse movements, and IDE timings and makes the random character data available to other operating system processes through the special files `/dev/random` and `/dev/urandom`."
 
-For instance, run `cat /dev/random` on a Linux box and observe the output.  You'll need to run `Ctrl`+`C` to exit to the prompt.  Run it again, and again.  You'll see that the store of entropy diminishes rather quickly because it is thrown away once it is used.
+For instance, run `cat /dev/random` on a Linux box and observe the output. You'll need to run `Ctrl`+`C` to exit to the prompt. Run it again, and again. You'll see that the store of entropy diminishes rather quickly because it is thrown away once it is used.
 
 (And you thought that random number generators just used the time as a seed!)
 
 ### Beak
 
->Paths begin with a piece of data called a `beak`. A beak is formally a `(p=ship q=desk r=case)`; it has three components, and might look like `/~dozbud-namsep/home/11`.
+> Paths begin with a piece of data called a `beak`. A beak is formally a `(p=ship q=desk r=case)`; it has three components, and might look like `/~dozbud-namsep/home/11`.
 
 You can get this information in Dojo by typing `%`.
 
-##  Other Arguments
+## Other Arguments
 
 The full sample prototype for a `%say` generator looks like `[[now, eny, beak] [unnamed arguments] [named arguments]]`.
 
@@ -83,7 +81,7 @@ You see a similar pattern in languages like Python, which permits (required) unn
 
 ### Unnamed Arguments
 
-By "unnamed" arguments, we really mean _required_ arguments; that is, arguments without defaults.  We stub out information we don't want with the empty noun `*`:
+By "unnamed" arguments, we really mean _required_ arguments; that is, arguments without defaults. We stub out information we don't want with the empty noun `*`:
 
 ```hoon
 |=  [* [a=@ud b=@ud c=@ud ~] ~]
@@ -119,38 +117,38 @@ To use it:
 
 Since the default value is `~`, if you are testing for the presence of named arguments you should test against that value.
 
-Note that, in all of these cases, you are writing a gate `|=` bartis which accepts `[* * ~]` or the like as sample.  Dojo (and Arvo generally) recognizes that `%say` generators have a special format and parse the command-line form into appropriate form for the gate itself.
+Note that, in all of these cases, you are writing a gate `|=` bartis which accepts `[* * ~]` or the like as sample. Dojo (and Arvo generally) recognizes that `%say` generators have a special format and parse the command-line form into appropriate form for the gate itself.
 
-- Reading: [Tlon Corporation, "Generators"](https://urbit.org/docs/tutorials/hoon/generators/), sections "%say Generators", "%say generators with arguments", "Arguments without a cell"
+- Reading: [Tlon Corporation, "Generators"](https://urbit.org/docs/hoon/hoon-school/generators/), sections "%say Generators", "%say generators with arguments", "Arguments without a cell"
 
-##  Worked Examples
+## Worked Examples
 
 ### Xenotation
 
-[Tic xenotation](http://hyperstition.abstractdynamics.org/archives/003538.html) is a way of writing any number using a minimal number of characters.  Each number is broken down into its prime factors and
+[Tic xenotation](http://hyperstition.abstractdynamics.org/archives/003538.html) is a way of writing any number using a minimal number of characters. Each number is broken down into its prime factors and
 
 For instance, the integers 2–15 in xenotation take the form:
 
-| Number | Tic Xenotation |
-| ------ | -------------- |
-|      2 | $\cdot$ (first prime) |
-|      3 | $(\cdot)$ (second prime) |
-|      4 | $\cdot\cdot$ (first prime times first prime) |
-|      5 | $((\cdot))$ (third prime) |
-|      6 | $\cdot(\cdot)$ (first prime times second prime) |
-|      7 | $(\cdot\cdot)$ (fourth prime) |
-|      8 | $\cdot\cdot\cdot$ (first prime times first prime times first prime) |
-|      9 | $(\cdot)(\cdot)$ (second prime times second prime) |
-|     10 | $\cdot((\cdot))$ (first prime times third prime) |
-|     11 | $(((\cdot)))$ (fifth prime) |
-|     12 | $\cdot\cdot(\cdot)$ (first prime times first prime times second prime) |
-|     13 | $(\cdot(\cdot))$ (sixth prime) |
-|     14 | $\cdot(\cdot\cdot)$ (first prime times fourth prime) |
-|     15 | $(\cdot)((\cdot))$ (second prime times third prime) |
+| Number | Tic Xenotation                                                         |
+| ------ | ---------------------------------------------------------------------- |
+| 2      | $\cdot$ (first prime)                                                  |
+| 3      | $(\cdot)$ (second prime)                                               |
+| 4      | $\cdot\cdot$ (first prime times first prime)                           |
+| 5      | $((\cdot))$ (third prime)                                              |
+| 6      | $\cdot(\cdot)$ (first prime times second prime)                        |
+| 7      | $(\cdot\cdot)$ (fourth prime)                                          |
+| 8      | $\cdot\cdot\cdot$ (first prime times first prime times first prime)    |
+| 9      | $(\cdot)(\cdot)$ (second prime times second prime)                     |
+| 10     | $\cdot((\cdot))$ (first prime times third prime)                       |
+| 11     | $(((\cdot)))$ (fifth prime)                                            |
+| 12     | $\cdot\cdot(\cdot)$ (first prime times first prime times second prime) |
+| 13     | $(\cdot(\cdot))$ (sixth prime)                                         |
+| 14     | $\cdot(\cdot\cdot)$ (first prime times fourth prime)                   |
+| 15     | $(\cdot)((\cdot))$ (second prime times third prime)                    |
 
 What does 16 look like?
 
-For historical reasons, I broke this code up into a `%say` generator `gen/xeno.hoon` and a library file `lib/primes.hoon` with the `++xenotate` arm in `primes`.  (This is older Hoon code written when I was first learning Hoon, and although everything is accurate and performative, I don't consider it to be a particularly elegant or efficient implementation, particularly of the prime sieve.  `++xenotate` is also profligate with recalculating prime lists.)
+For historical reasons, I broke this code up into a `%say` generator `gen/xeno.hoon` and a library file `lib/primes.hoon` with the `++xenotate` arm in `primes`. (This is older Hoon code written when I was first learning Hoon, and although everything is accurate and performative, I don't consider it to be a particularly elegant or efficient implementation, particularly of the prime sieve. `++xenotate` is also profligate with recalculating prime lists.)
 
 **`xeno.hoon`**:
 
@@ -262,8 +260,8 @@ The following Hoon Workbook examples walk you line-by-line through several `%say
 
 The traffic light example is furthermore an excellent prelude to our entrée to Gall.
 
-- Reading: [Tlon Corporation, "Hoon Workbook:  Digits"](https://urbit.org/docs/tutorials/hoon/workbook/digits/)
-- Reading: [Tlon Corporation, "Hoon Workbook:  Magic 8-Ball"](https://urbit.org/docs/tutorials/hoon/workbook/eightball/)
-- Reading: [Tlon Corporation, "Hoon Workbook:  Traffic Light"](https://urbit.org/docs/tutorials/hoon/workbook/traffic-light/)
+- Reading: [Tlon Corporation, "Hoon Workbook: Digits"](https://urbit.org/docs/hoon/hoon-school/workbook/digits/)
+- Reading: [Tlon Corporation, "Hoon Workbook: Magic 8-Ball"](https://urbit.org/docs/hoon/hoon-school/workbook/eightball/)
+- Reading: [Tlon Corporation, "Hoon Workbook: Traffic Light"](https://urbit.org/docs/hoon/hoon-school/workbook/traffic-light/)
 
 ![](../img/07-header-apollo-3.png)

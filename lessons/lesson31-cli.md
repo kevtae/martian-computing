@@ -1,32 +1,31 @@
-#   Command-Line Interface
+# Command-Line Interface
 
 ![](../img/31-header-phobos-0.png){: width=100%}
 
-##  Learning Objectives
+## Learning Objectives
 
 - Diagram how `%dill` instruments terminal events.
 - Produce a command-line interface app using `sole` and `shoe`.
 
-Urbit traffics only in events.  Every occurrence or action in any part of the system must become an event to be legible to Arvo.  A command-line interface is conventionally a text user interface (TUI) (although not all TUIs are CLIs and vice versa).
+Urbit traffics only in events. Every occurrence or action in any part of the system must become an event to be legible to Arvo. A command-line interface is conventionally a text user interface (TUI) (although not all TUIs are CLIs and vice versa).
 
-A command line like Dojo is useful for instrumenting and interacting with agents interactively.  A long-running agent or a graphical interface (like Landscape) is preferred for more complex or alternatively more asynchronous interactions.
+A command line like Dojo is useful for instrumenting and interacting with agents interactively. A long-running agent or a graphical interface (like Landscape) is preferred for more complex or alternatively more asynchronous interactions.
 
-`%dojo` is the main interface for the command-line user; since all events are well-formed Hoonish, if you know an agent's interface you can always accomplish anything on a ship in Dojo that you can do through Landscape.  (The trick, of course, is knowing the arcana, which at this point in history frequently requires recourse to [GitHub issues](https://github.com/urbit/urbit/issues).)
+`%dojo` is the main interface for the command-line user; since all events are well-formed Hoonish, if you know an agent's interface you can always accomplish anything on a ship in Dojo that you can do through Landscape. (The trick, of course, is knowing the arcana, which at this point in history frequently requires recourse to [GitHub issues](https://github.com/urbit/urbit/issues).)
 
-Even in Dojo, however, you can change your CLI.  By pressing `Ctrl`+`X`, you can cycle through CLI interfaces:  at least `%chat-cli` and `%dojo` are running on your ship now.  There is also `%shoe`, which is an illustrative example of a Gall agent CLI.
+Even in Dojo, however, you can change your CLI. By pressing `Ctrl`+`X`, you can cycle through CLI interfaces: at least `%chat-cli` and `%dojo` are running on your ship now. There is also `%shoe`, which is an illustrative example of a Gall agent CLI.
 
 - Optional Reading: [Tlon Corporation, `chat-cli.hoon`](https://github.com/urbit/urbit/blob/master/pkg/arvo/app/chat-cli.hoon)
 
-
-##  Building a CLI Agent
+## Building a CLI Agent
 
 ![](../img/31-header-phobos-1.png){: width=100%}
 
 ### `sole` Library
 
-We previously examined `sole`, which provided some structures useful in `%say` and `%ask` generators.  Let's recap on `%sole`.
+We previously examined `sole`, which provided some structures useful in `%say` and `%ask` generators. Let's recap on `%sole`.
 
-`sole` mold builders are designed to produce structured results or events.  Their purpose is to provide a standard way of interfacing agent and generator components, both to other agents/generators and to Arvo.
+`sole` mold builders are designed to produce structured results or events. Their purpose is to provide a standard way of interfacing agent and generator components, both to other agents/generators and to Arvo.
 
 ```hoon
 |%
@@ -73,7 +72,7 @@ We still don't need most of these to start a CLI agent, but you can see the brea
 
 [`lib/shoe.hoon`](https://github.com/urbit/urbit/blob/master/pkg/arvo/lib/shoe.hoon) provides everything _besides_ text rendering for CLI apps.
 
-`shoe` produces either Gall cards or formatted `shoe-effect` cards that are intended for direct passing to all connected `shoe` apps.  The `shoe-effect` cards can, for instance, pass `sole-effect`s (`%bel`, `%pro`, `%txt`, etc.).
+`shoe` produces either Gall cards or formatted `shoe-effect` cards that are intended for direct passing to all connected `shoe` apps. The `shoe-effect` cards can, for instance, pass `sole-effect`s (`%bel`, `%pro`, `%txt`, etc.).
 
 ```hoon
 |%
@@ -115,7 +114,7 @@ We still don't need most of these to start a CLI agent, but you can see the brea
 --
 ```
 
-`++command-parser` is where a lot of the magic takes place; it relies thoroughly on your ability to parse text.  (We saw this some in Text Processing; we'll see more in Hoon I.)  It can be a fairly sophisticated arm, as the `++parser` arm in `app/chat-cli.hoon`.
+`++command-parser` is where a lot of the magic takes place; it relies thoroughly on your ability to parse text. (We saw this some in Text Processing; we'll see more in Hoon I.) It can be a fairly sophisticated arm, as the `++parser` arm in `app/chat-cli.hoon`.
 
 A simple command parser could look like this:
 
@@ -127,11 +126,11 @@ A simple command parser could look like this:
   (perk %demo %row %table ~)
 ```
 
-`nail`, `++like`, `stag`, and `++perk` are all parsing rule concepts. Parsing rules are complex but can be reviewed in the [text parsing tutorial](https://urbit.org/docs/tutorials/hoon/parsing/).
+`nail`, `++like`, `stag`, and `++perk` are all parsing rule concepts. Parsing rules are complex but can be reviewed in the [text parsing tutorial](https://urbit.org/docs/hoon/hoon-school/parsing/).
 
-Once you have a working app, you can use `|link` to connect to it at the console.  Switch to it using `Ctrl`+`X`.  (`|unlink` does the opposite.)
+Once you have a working app, you can use `|link` to connect to it at the console. Switch to it using `Ctrl`+`X`. (`|unlink` does the opposite.)
 
-What could you make with a command-line app?  Some ideas:
+What could you make with a command-line app? Some ideas:
 
 - Games like Yahtzee or poker or 42 (for which you already have some library code ready)
 - Automation language like a simple variant of `sh` or PowerShell
@@ -140,15 +139,14 @@ What could you make with a command-line app?  Some ideas:
 
 The sky's the limit!
 
-- Reading: [Tlon Corporation, "CLI apps"](https://urbit.org/docs/tutorials/hoon/cli-tutorial/)
+- Reading: [Tlon Corporation, "CLI apps"](https://urbit.org/docs/hoon/hoon-school/cli-tutorial/)
 - Optional Reading: [Tlon Corporation, `lib/shoe.hoon`](https://github.com/urbit/urbit/blob/master/pkg/arvo/lib/shoe.hoon)
 - Optional Reading: [`~hosbud-socbur`, `ed`](https://github.com/crides/ed.hoon)
 
-
-##  Unicode
+## Unicode
 
 ![](../img/31-header-phobos-2.png){: width=100%}
 
-The `@c` aura denotes an arbitrary-length UTF-32 value.  This is used extensively in the console subsystems like `%dill` and `drum`, but is frequently not used elsewhere (`@t` suffices).  Most Unicode handling in Urbit is just passing data around rather than processing it, so compatibility is fairly straightforward.  (Codepoints less than 32, however, are manually excluded for some reason, except for `\n` newline 0x0A.)
+The `@c` aura denotes an arbitrary-length UTF-32 value. This is used extensively in the console subsystems like `%dill` and `drum`, but is frequently not used elsewhere (`@t` suffices). Most Unicode handling in Urbit is just passing data around rather than processing it, so compatibility is fairly straightforward. (Codepoints less than 32, however, are manually excluded for some reason, except for `\n` newline 0x0A.)
 
-[`++tuba`](https://urbit.org/docs/reference/library/4b/#tuba) and [`++tufa`](https://urbit.org/docs/reference/library/4b/#tufa) convert a `(list @t)` (`tape`) to `(list @c)` and back again.  We call a list of individual codepoints `(list @c)` a `tour`.
+[`++tuba`](https://urbit.org/docs/reference/library/4b/#tuba) and [`++tufa`](https://urbit.org/docs/reference/library/4b/#tufa) convert a `(list @t)` (`tape`) to `(list @c)` and back again. We call a list of individual codepoints `(list @c)` a `tour`.

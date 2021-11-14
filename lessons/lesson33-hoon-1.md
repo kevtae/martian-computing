@@ -1,15 +1,14 @@
-#   The Hoon Compiler
+# The Hoon Compiler
 
 ![](../img/33-header-io.png){: width=100%}
 
-##  Learning Objectives
+## Learning Objectives
 
--   Examine how Hoon code is parsed.
+- Examine how Hoon code is parsed.
 
-We dealt with parsing text previously for generic token matching and handling.  The [Hoon parsing library](https://urbit.org/docs/reference/library/4f/) is quite substantial, however, and bootstraps the language itself on initial ship launch.
+We dealt with parsing text previously for generic token matching and handling. The [Hoon parsing library](https://urbit.org/docs/reference/library/4f/) is quite substantial, however, and bootstraps the language itself on initial ship launch.
 
-
-##  Building Code
+## Building Code
 
 ![](../img/33-header-callisto.png){: width=100%}
 
@@ -36,7 +35,7 @@ Logically, Hoon parsing takes the following steps:
 
 The Urbit parser first desugars expressions.
 
-If the resulting code is lexically valid, it produces an AST; else, it raises an error such as `%generator-build-fail`.  For instance, one can produce an AST for a compile-time failure such as `nest-fail`:
+If the resulting code is lexically valid, it produces an AST; else, it raises an error such as `%generator-build-fail`. For instance, one can produce an AST for a compile-time failure such as `nest-fail`:
 
 ```hoon
 > !,  *hoon  (add:rs .1 "a")
@@ -58,12 +57,11 @@ The AST is then compiled to Nock; at this point, compile-time failures like `min
 
 - Optional Reading: [François-René Rideau (Faré), "Build Systems"](https://ngnghm.github.io/blog/2016/04/26/chapter-9-build-systems/)
 
-
-##  The Parser
+## The Parser
 
 ![](../img/33-header-ganymede.png){: width=100%}
 
-Parsing Hoon is related to parsing text.  The Hoon must be consumed into a data structure—in the case of Nock-based languages, everything becomes a binary tree.
+Parsing Hoon is related to parsing text. The Hoon must be consumed into a data structure—in the case of Nock-based languages, everything becomes a binary tree.
 
 In fact, you can see the AST for any Hoon expression in one step using [`!,` zapcom](https://urbit.org/docs/reference/cheat-sheet/).
 
@@ -101,30 +99,29 @@ Sugared expressions will reduce to the same result as their desugared form:
 [%dtts p=[%rock p=%f q=0] q=[%sand p=%ud q=1]]
 ```
 
-Notice the `%dtls` in there for `.+`?  That maps into the Nock increment operator Rule Four:
+Notice the `%dtls` in there for `.+`? That maps into the Nock increment operator Rule Four:
 
 ```hoon
 {$dtls *}  [(nice [%atom %$ ~]) [%4 q:$(gen p.gen, gol [%atom %$ ~])]]
 ```
 
-Because Hoon rigorously defines all symbols and their interpretations (as does Lisp), there is a direct equivalence between the source code representation and the parsed abstract syntax tree (AST).  This allows for metaprogramming over common structures like cores and doors.  (Think about using dry cores with different variadicities, or wet cores.)
+Because Hoon rigorously defines all symbols and their interpretations (as does Lisp), there is a direct equivalence between the source code representation and the parsed abstract syntax tree (AST). This allows for metaprogramming over common structures like cores and doors. (Think about using dry cores with different variadicities, or wet cores.)
 
 The Hoon parser is `++vast`, with the regular form in `++structure:norm:vast` and irregular form in `++scat:vast` and `++scad:vast`.
 
-- Reading:  [Tlon Corporation, "Parsing in Hoon"](https://urbit.org/docs/tutorials/hoon/parsing/)
-- Reading:  `hoon.hoon`, `++vast` arm
-
+- Reading: [Tlon Corporation, "Parsing in Hoon"](https://urbit.org/docs/hoon/hoon-school/parsing/)
+- Reading: `hoon.hoon`, `++vast` arm
 
 ### Rules
 
-Any parser must tokenize an input string to yield sensible tokens for the handler.  You can use [`++scan`](https://urbit.org/docs/reference/library/4g/#scan) to parse a `tape` given a `rule`:
+Any parser must tokenize an input string to yield sensible tokens for the handler. You can use [`++scan`](https://urbit.org/docs/reference/library/4g/#scan) to parse a `tape` given a `rule`:
 
 ```hoon
 > (scan "100 200 300 400 500" (more ace dem))
 [100 [i=200 t=~[300 400 500]]]
 ```
 
-A parsing rule in Hoon describes a way of unambiguously turning a `tape` into a binary tree of tokens.  Formally, [`++rule`](https://urbit.org/docs/reference/library/3g/#rule) is a door operating on a `nail` and an `edge`.
+A parsing rule in Hoon describes a way of unambiguously turning a `tape` into a binary tree of tokens. Formally, [`++rule`](https://urbit.org/docs/reference/library/3g/#rule) is a door operating on a `nail` and an `edge`.
 
 ```hoon
 ++  rule  _|:($:nail $:edge)
@@ -146,11 +143,11 @@ There are examples of rules in the [parsing tutorial]() and in [4f Parsing (Rule
 
 For Hoon, everything is a noun, which means that in one sense we have a straightforward result (a binary tree of nouns) and in another sense a very complex result (a binary tree of tokens distinguishing runes, literals, and other values).
 
-Dojo scans input for rule failure and will not allow you to type ill-formed input.  (You can get around this but it won't execute.)
+Dojo scans input for rule failure and will not allow you to type ill-formed input. (You can get around this but it won't execute.)
 
 #### Runes
 
-`++expression:norm:vast` parses runes into tokens.  It produces unique tokens tagging each actual rune occurrence (which may be reduced further by desugaring).  For instance, for the `|` bar runes it proceeds thus:
+`++expression:norm:vast` parses runes into tokens. It produces unique tokens tagging each actual rune occurrence (which may be reduced further by desugaring). For instance, for the `|` bar runes it proceeds thus:
 
 ```hoon
 ++  expression
@@ -177,13 +174,13 @@ Dojo scans input for rule failure and will not allow you to type ill-formed inpu
   ==
 ```
 
-- Reading:  `hoon.hoon`, `++expression:norm:vast` arm
+- Reading: `hoon.hoon`, `++expression:norm:vast` arm
 
 #### Atoms
 
-Each aura has a unique way of writing and printing in Hoon.  Since we are concerned with parsing, we defer the discussion of the prettyprinter to Hoon 2.
+Each aura has a unique way of writing and printing in Hoon. Since we are concerned with parsing, we defer the discussion of the prettyprinter to Hoon 2.
 
-The `++so` arm parses atoms.  For instance, to parse an unsigned decimal value, the `++bisk:so` arm is utilized:
+The `++so` arm parses atoms. For instance, to parse an unsigned decimal value, the `++bisk:so` arm is utilized:
 
 ```hoon
 ++  so
@@ -207,24 +204,24 @@ The `++so` arm parses atoms.  For instance, to parse an unsigned decimal value, 
   ==
 ```
 
-[`++sane`](https://urbit.org/docs/reference/library/4b/#sane) can be used to determine if a value is compatible with an aura (as `@tas`).  It is unfortunately still inchoate at the time of writing (marked with `XX more and better sanity`.)
+[`++sane`](https://urbit.org/docs/reference/library/4b/#sane) can be used to determine if a value is compatible with an aura (as `@tas`). It is unfortunately still inchoate at the time of writing (marked with `XX more and better sanity`.)
 
 Other input formatting functions include
 
-- [`++scow`](https://urbit.org/docs/reference/library/4m/#scow), which renders a pair of atom aura (a `@tas` token, `%ud` for instance) and value as a `tape`.  It is considered superior to interpolation and works very well for data of an expected type.
+- [`++scow`](https://urbit.org/docs/reference/library/4m/#scow), which renders a pair of atom aura (a `@tas` token, `%ud` for instance) and value as a `tape`. It is considered superior to interpolation and works very well for data of an expected type.
 - [`++scot`](https://urbit.org/docs/reference/library/4m/#scot) does the same as a `cord`.
 - [`++slaw`](https://urbit.org/docs/reference/library/4m/#slaw) parses an input `cord` as an atom of a specified aura.
 
-    ```hoon
-    > `(unit @q)`(slaw %q '.~winter-martyr')
-    [~ .~winter-martyr]
-    ```
+  ```hoon
+  > `(unit @q)`(slaw %q '.~winter-martyr')
+  [~ .~winter-martyr]
+  ```
 
-- Reading:  `hoon.hoon`, `++so` arm
+- Reading: `hoon.hoon`, `++so` arm
 
 #### Cells and Other Types
 
-Cells are marked with the `%cell` tag; cores with `%core`; jetting and binary hints with `%hint`; and so forth.  These are enumerated in the [5a Compiler Utilities](https://github.com/urbit/urbit/blob/master/pkg/arvo/sys/hoon.hoon#L7483) section of `hoon.hoon`.
+Cells are marked with the `%cell` tag; cores with `%core`; jetting and binary hints with `%hint`; and so forth. These are enumerated in the [5a Compiler Utilities](https://github.com/urbit/urbit/blob/master/pkg/arvo/sys/hoon.hoon#L7483) section of `hoon.hoon`.
 
 ### Runes
 
@@ -278,15 +275,15 @@ The types of children that a rune may have are enumerated in [4o Molds](https://
 +$  tope                                        ::  topographic type
 ```
 
-Desugaring is defined in terms of the runic primitives.  For instance, [`?@` wutpat](https://urbit.org/docs/reference/hoon-expressions/rune/wut/#wutpat) reduces to `?:(?=(@ p) q r)`.  This is represented in the parser by:
+Desugaring is defined in terms of the runic primitives. For instance, [`?@` wutpat](https://urbit.org/docs/reference/hoon-expressions/rune/wut/#wutpat) reduces to `?:(?=(@ p) q r)`. This is represented in the parser by:
 
 ```hoon
 {$wtvt *}   [%wtcl [%wtts [%base %atom %$] p.gen] q.gen r.gen]
 ```
 
-(There is a relic of an attempted renaming of `$` buc to bus in the `$bs` rune names.  You can find a few other legacy notations in the palimpsest of `hoon.hoon`, such as vat for `@` pat and net for `/` fas.)
+(There is a relic of an attempted renaming of `$` buc to bus in the `$bs` rune names. You can find a few other legacy notations in the palimpsest of `hoon.hoon`, such as vat for `@` pat and net for `/` fas.)
 
-- Reading:  `hoon.hoon`, `++vast` arm
+- Reading: `hoon.hoon`, `++vast` arm
 
 ### ASTs to Nock
 
@@ -317,9 +314,9 @@ Given an abstract syntax tree with tokens and atoms, how is it converted to Nock
 [%dtls p=[%sand p=%ud q=1]]
 ```
 
-`++ar` is the "texture engine," which produces `$nock`s using arms like `++fish`.  But the real magic takes place in `++mint`, which maps rune tokens with type, and `++mull`, which deals with wet gate operations.  (There are quite a number of other arms in `++ar` such as `++fish` and `++bake` which are used in handling and expanding molds as well.)
+`++ar` is the "texture engine," which produces `$nock`s using arms like `++fish`. But the real magic takes place in `++mint`, which maps rune tokens with type, and `++mull`, which deals with wet gate operations. (There are quite a number of other arms in `++ar` such as `++fish` and `++bake` which are used in handling and expanding molds as well.)
 
-`++mint` is much larger and more involved, to map rune tokens to Nock code.  It accepts a `type` and a `hoon`, returning a `type` and a `nock`.  It's mostly a switch on rune matches as the AST is compiled into Nock.
+`++mint` is much larger and more involved, to map rune tokens to Nock code. It accepts a `type` and a `hoon`, returning a `type` and a `nock`. It's mostly a switch on rune matches as the AST is compiled into Nock.
 
 Here is `.?` dotwut (clearly mapped to Nock):
 
@@ -333,6 +330,6 @@ Here is `|%` barcen, which uses `++grow` to build a core:
 {$brcn *}  (grow %gold p.gen %dry [%$ 1] q.gen)
 ```
 
-- Reading:  `hoon.hoon`, `++ar` arms `++mint`, `++fish`, `++bake`, `++mull`
+- Reading: `hoon.hoon`, `++ar` arms `++mint`, `++fish`, `++bake`, `++mull`
 
 ![](../img/33-header-europa.png){: width=100%}

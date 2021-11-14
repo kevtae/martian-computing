@@ -1,25 +1,25 @@
-#   Libraries
+# Libraries
 
 ![](../img/10-header-stars-3.png)
 
-##  Learning Objectives
+## Learning Objectives
 
 - Create a library in `lib/` and call it using `/+`.
 - Write unit tests for the library.
 - Employ strategies for nested loops.
 - Compose Hoon that adheres to the Tlon Hoon style guide.
+
 * Produce a library.
 
+## Libraries
 
-##  Libraries
+What makes something a library? A library, or module, or package, is a collection of optional yet useful code which coherently carries out some task.
 
-What makes something a library?  A library, or module, or package, is a collection of optional yet useful code which coherently carries out some task.
+For our purposes, a library is basically a battery, no payload. It's typically constructed with a `|%` barcen rune and stored in the `lib/` folder.
 
-For our purposes, a library is basically a battery, no payload.  It's typically constructed with a `|%` barcen rune and stored in the `lib/` folder.
+The Ford rune `/+` faslus imports a Hoon file into the subject from `lib/` in the current desk. (Because of the way Ford and the subject interact, you can't execute most of these things in the Dojo. I recommend making a minimal generator to import and test your functions.)
 
-The Ford rune `/+` faslus imports a Hoon file into the subject from `lib/` in the current desk.  (Because of the way Ford and the subject interact, you can't execute most of these things in the Dojo.  I recommend making a minimal generator to import and test your functions.)
-
-```hoon
+````hoon
 /+  bip39
 :-  %say
 |=  [[* eny=@uv *] ~ ~]
@@ -34,15 +34,15 @@ Use `*` in front of the name to import the library without a face.
 |=  [[* eny=@uv *] ~ ~]
 :-  %noun
 (to-seed "words" "more-words")
-```
+````
 
 A few other Ford runes manage builds and dependencies from other parts of Arvo; more in Ford 1.
 
-Urbit does not at the time of writing have a package management system (August 2020):  there's not enough userspace code to require it yet, and everything else new has just come to live in the kernel, thereby inheriting the mantle of obsessive refinement.
+Urbit does not at the time of writing have a package management system (August 2020): there's not enough userspace code to require it yet, and everything else new has just come to live in the kernel, thereby inheriting the mantle of obsessive refinement.
 
 ### Library Composition
 
-Any file in `lib/` can be imported using `/+` faslus.  It should be structured as a core, likely with `|%` barcen.  Here's a more complex example of a library:
+Any file in `lib/` can be imported using `/+` faslus. It should be structured as a core, likely with `|%` barcen. Here's a more complex example of a library:
 
 ```hoon
 ::
@@ -78,8 +78,7 @@ There are some new runes in there, of course, but pay attention to the `|%`/`++`
 
 (As an aside, `^|` ketbar adjusts type nesting to be contravariant; `~%` sigcen and `~/` sigfas are jet hints; and `~_` sigcab is an error annotation.)
 
-
-##  Traps as Nested Loops
+## Traps as Nested Loops
 
 Consider a classic nested loop, as in C:
 
@@ -110,9 +109,9 @@ Naïvely, you may suppose that you can compose a nested loop as a trap inside of
       $(i i, j +(j), w (add w (mul i j)))
 ```
 
-The problem is that traps have a named default subject `$` which generates and replaces the subject from the first trap.  This code fails because of confusion around `$`.
+The problem is that traps have a named default subject `$` which generates and replaces the subject from the first trap. This code fails because of confusion around `$`.
 
-My preferred solution is to unroll the loop:  track the conditions under which each loop iteration terminates and compose a test to find those conditions.  For each test, associate a `$()` regeneration point.  It's a bit like rewriting a nested loop as a `while` loop in a procedural language like C or Python.
+My preferred solution is to unroll the loop: track the conditions under which each loop iteration terminates and compose a test to find those conditions. For each test, associate a `$()` regeneration point. It's a bit like rewriting a nested loop as a `while` loop in a procedural language like C or Python.
 
 ```hoon
 =/  i  1
@@ -123,14 +122,13 @@ My preferred solution is to unroll the loop:  track the conditions under which e
   $(i i, j +(j), w (add w (mul (snag i u) (snag j v))))
 ```
 
-Another solution is to "escape" the subject `$` with `^`:  `^$` skips the first match of the symbol `$` and thus triggers the outer trap.  This approach is used sometimes in kernel code.
+Another solution is to "escape" the subject `$` with `^`: `^$` skips the first match of the symbol `$` and thus triggers the outer trap. This approach is used sometimes in kernel code.
 
+## Testing Code
 
-##  Testing Code
+Best coding practice recommends composing unit tests to verify the behavior of program components. A good unit test tests one thing and one thing only.
 
-Best coding practice recommends composing unit tests to verify the behavior of program components.  A good unit test tests one thing and one thing only.
-
-The primary way to test code automatically is to use Ford's `+test` generator.  This scans for arms (that conventionally begin with `++test`) in the `tests/` folder at a path otherwise corresponding to the system path.  For instance, to run the unit tests for a particular library file:
+The primary way to test code automatically is to use Ford's `+test` generator. This scans for arms (that conventionally begin with `++test`) in the `tests/` folder at a path otherwise corresponding to the system path. For instance, to run the unit tests for a particular library file:
 
 ```hoon
 > +test /lib/number-to-words
@@ -189,15 +187,15 @@ An exception is a manifestation of unexpected behavior which can give rise to a 
 --
 ```
 
-There are two library imports:  the library to test and `test` (with no namespace).  `test` contains two arms:  `++expect-eq` and `++expect-fail`[.](https://s3-us-west-1.amazonaws.com/vocs/map.html#)  <!-- egg -->
+There are two library imports: the library to test and `test` (with no namespace). `test` contains two arms: `++expect-eq` and `++expect-fail`[.](https://s3-us-west-1.amazonaws.com/vocs/map.html#) <!-- egg -->
 
-As you can see above, the expected structure of a testing file introduces a couple of new runes:  `;:` miccol and `%+` cenlus.
+As you can see above, the expected structure of a testing file introduces a couple of new runes: `;:` miccol and `%+` cenlus.
 
-- `;:` allows us to run a binary function as if it were an $n$-ary function; that is, we can string together the whole following list against the `weld` function.  Since it doesn't take a specific number of runes, you have to terminate the running series with the digraph `==` tistis.
-- `%+` calls a gate with a cell sample.  In this case, we use it to
-- `!>` isn't new—you saw these in Cores when we talked about vases.  It wraps a noun in its type producing a vase.
+- `;:` allows us to run a binary function as if it were an $n$-ary function; that is, we can string together the whole following list against the `weld` function. Since it doesn't take a specific number of runes, you have to terminate the running series with the digraph `==` tistis.
+- `%+` calls a gate with a cell sample. In this case, we use it to
+- `!>` isn't new—you saw these in Cores when we talked about vases. It wraps a noun in its type producing a vase.
 
-Most of the time, `++expect-eq` is the only arm used.  `++expect-fail` works a bit differently:
+Most of the time, `++expect-eq` is the only arm used. `++expect-fail` works a bit differently:
 
 ```hoon
 ++  test-map-got  ^-  tang
@@ -209,22 +207,21 @@ Most of the time, `++expect-eq` is the only arm used.  `++expect-fail` works a b
   ==
 ```
 
-`|.` bardot is like `|-` barhep but defers evaluation instead.  Here we are using it to evaluate the expected failure later than compilation time.
+`|.` bardot is like `|-` barhep but defers evaluation instead. Here we are using it to evaluate the expected failure later than compilation time.
 
-- Optional Reading: [Tlon Corporation, "Unit Testing with Ford"](https://web.archive.org/web/20200614210451/https://urbit.org/docs/tutorials/hoon/test-sets/)
+- Optional Reading: [Tlon Corporation, "Unit Testing with Ford"](https://web.archive.org/web/20200614210451/https://urbit.org/docs/hoon/hoon-school/test-sets/)
 
 ![](../img/10-header-stars-2.png)
 
+## Hoon Style
 
-##  Hoon Style
-
-It's time for you to read and absorb the [authoritative Hoon style guide](https://urbit.org/docs/tutorials/hoon/style/).  All code you produce subsequently should hew to it, particularly the informal comments.  (It will take us a while yet in this course to get to the point where formal comments are worth the trouble.)
+It's time for you to read and absorb the [authoritative Hoon style guide](https://urbit.org/docs/hoon/hoon-school/style/). All code you produce subsequently should hew to it, particularly the informal comments. (It will take us a while yet in this course to get to the point where formal comments are worth the trouble.)
 
 It's worth noting that I have a few minor quibbles on style:
 
 1. Breathing comments feel backwards to me.
 2. I think that trap resolutions `$()` should be differently indented to make the loop more legible (most of the time); i.e., there should be flexibility in this placement.
-3. Trap bodies should be indented (rather than backstepping).  I admit this to be procedural recidivism on my part.
+3. Trap bodies should be indented (rather than backstepping). I admit this to be procedural recidivism on my part.
 
 For instance, here are samples from some library code I have written, which adhere to different rules for making the `$` resolution legible and indent the trap bodies.
 
@@ -251,11 +248,10 @@ For instance, here are samples from some library code I have written, which adhe
 
 How would you rewrite these code snippets in fully-compliant style?
 
-- Reading: [Tlon Corporation, "Hoon Style Guide"](https://urbit.org/docs/tutorials/hoon/style/)
+- Reading: [Tlon Corporation, "Hoon Style Guide"](https://urbit.org/docs/hoon/hoon-school/style/)
 
+## A Word of Encouragement
 
-##  A Word of Encouragement
-
-> Don't embed fear in your code.  Don't design systems around your fear because you don't have confidence in your system.  Tools should motivate the mind, not subjugate it.  (Aaron Hsu)
+> Don't embed fear in your code. Don't design systems around your fear because you don't have confidence in your system. Tools should motivate the mind, not subjugate it. (Aaron Hsu)
 
 ![](../img/10-header-stars-1.png)

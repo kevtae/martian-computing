@@ -1,54 +1,53 @@
-#   Subject-Oriented Programming
+# Subject-Oriented Programming
 
 ![](../img/08-schiaparelli-01.png)
 
-##  Learning Objectives
+## Learning Objectives
 
--   Explain what a "subject-oriented language" means.
--   Identify common Hoon patterns:  batteries, and doors, arms, wings, and legs.
--   Convert between different regular and irregular forms of Hoon runes.
--   Manage a ship:  events and OTAs.
-*   Test irregular syntax
+- Explain what a "subject-oriented language" means.
+- Identify common Hoon patterns: batteries, and doors, arms, wings, and legs.
+- Convert between different regular and irregular forms of Hoon runes.
+- Manage a ship: events and OTAs.
 
+* Test irregular syntax
 
-##  The Subject
+## The Subject
 
-You have perhaps heard Hoon described as a "subject-oriented language."  What does this mean?  And what is a subject?
+You have perhaps heard Hoon described as a "subject-oriented language." What does this mean? And what is a subject?
 
-The subject of any Hoon expression is the binary tree which spawned it.  In essence, subject-oriented programming is a way of fusing context, stack, and variable scope into one.
+The subject of any Hoon expression is the binary tree which spawned it. In essence, subject-oriented programming is a way of fusing context, stack, and variable scope into one.
 
 Subject-oriented programming means that this scope, the subject itself, is all you really have to take into account.
 
-The downside is that much of the actual system-level code, what runs on the loom and in the Vere layer, is opaque to you.  You manipulate only Nock and above (as Urbit promises), but you don't have insight into what's happening with jets and the actual C or Haskell implementation.  (The system is abstracted away.)
+The downside is that much of the actual system-level code, what runs on the loom and in the Vere layer, is opaque to you. You manipulate only Nock and above (as Urbit promises), but you don't have insight into what's happening with jets and the actual C or Haskell implementation. (The system is abstracted away.)
 
 It's worth addressing the relationship of Hoon+Nock to other compiler systems as well at this point:
 
 > Urbit does not use the lambda calculus, an environment or symbol table, or linking. Because it pushes name resolution out of the fundamental interpreter and up into the language, it can play many more namespace juggling tricks.
 
+## Limbs
 
-##  Limbs
+Limbs refer to pieces of data resolved in the subject. Just as humans have two kinds of limbs (arms and legs), so do hoons.
 
-Limbs refer to pieces of data resolved in the subject.  Just as humans have two kinds of limbs (arms and legs), so do hoons.
-
-Arms compute something, so they have a core.  Legs are simply subtrees.
+Arms compute something, so they have a core. Legs are simply subtrees.
 
 Meditate upon Serge Nubret as a reminder:
 
 ![](../img/08-nubret.png)
 
-This is why we say that `-/` tisfas, which we have used to define a variable, actually pins a face to the subject.  That is, it provides a metadata tag for the search path so you can locate the value again.
+This is why we say that `-/` tisfas, which we have used to define a variable, actually pins a face to the subject. That is, it provides a metadata tag for the search path so you can locate the value again.
 
-There are a lot of irregular syntax forms for efficiently accessing limbs.  You should check the documents in ["Limbs"](https://urbit.org/docs/reference/hoon-expressions/limb/limb/) to make sure that these are familiar to you.
+There are a lot of irregular syntax forms for efficiently accessing limbs. You should check the documents in ["Limbs"](https://urbit.org/docs/reference/hoon-expressions/limb/limb/) to make sure that these are familiar to you.
 
-A wing is a list of limbs; specifically, a wing is a search path into the subject.  Notably, these are written leftmost-innermost, which feels backwards from C-style languages.
+A wing is a list of limbs; specifically, a wing is a search path into the subject. Notably, these are written leftmost-innermost, which feels backwards from C-style languages.
 
-`^` is labeled in the docs as skipping the first $n$ matches in the subject.  What this means to you is that the $n$ "nearest" names are skipped first, so what `^` does is pull a name from an outer core.  (Naturally, you only use this when you know what you're looking for in the subject.)  `^$` is one way of setting up a nested loop with two `|-` barket traps.
+`^` is labeled in the docs as skipping the first $n$ matches in the subject. What this means to you is that the $n$ "nearest" names are skipped first, so what `^` does is pull a name from an outer core. (Naturally, you only use this when you know what you're looking for in the subject.) `^$` is one way of setting up a nested loop with two `|-` barket traps.
 
-Wings are lists of limbs.  It's basically the search path of breadcrumbs to locate a particular arm or leg—computation or data.
+Wings are lists of limbs. It's basically the search path of breadcrumbs to locate a particular arm or leg—computation or data.
 
 (You may wish to review Subject-Oriented Programming, section "Faces", at this point as well.)
 
-The current subject (Arvo) is `.`.  (Most of these values are actually hashes standing in for entire arms.)
+The current subject (Arvo) is `.`. (Most of these values are actually hashes standing in for entire arms.)
 
 ```hoon
 > .
@@ -88,23 +87,23 @@ The current subject (Arvo) is `.`.  (Most of these values are actually hashes st
 ]
 ```
 
-- Reading: [Tlon Corporation, "The Subject and Its Legs", section "A Start"](https://urbit.org/docs/tutorials/hoon/the-subject-and-its-legs/)
+- Reading: [Tlon Corporation, "The Subject and Its Legs", section "A Start"](https://urbit.org/docs/hoon/hoon-school/the-subject-and-its-legs/)
 - Reading: [Tlon Corporation, "Limbs"](https://urbit.org/docs/reference/hoon-expressions/limb/limb/)
 - Reading: [Tlon Corporation, "Wings"](https://urbit.org/docs/reference/hoon-expressions/limb/wing/)
 - Reading: [Ted Blackman `~rovnys-ricfer`, "Why Hoon?"](https://urbit.org/blog/why-hoon/)
 
-
-##  More Common Patterns
+## More Common Patterns
 
 ![](../img/08-schiaparelli-01.png)
 
-A battery is part of a core, of course:  it contains the code to be executed.  (Analogously with object-oriented programming, it would be the methods.)  Batteries are frequently set up with `|%` barcen although other `|` bar runes may be used.  Typically, each arm of a battery is "dry," meaning that it is type-specific, although there are also "wet" cores which possess type genericity.
+A battery is part of a core, of course: it contains the code to be executed. (Analogously with object-oriented programming, it would be the methods.) Batteries are frequently set up with `|%` barcen although other `|` bar runes may be used. Typically, each arm of a battery is "dry," meaning that it is type-specific, although there are also "wet" cores which possess type genericity.
 
-A door is the most general case of a function in Hoon.  It packages a core's payload with a cell of `[sample context]`; thus, they are a cell of `[battery [sample context]]`.  Doors are created with `|_` barcab.  That is, the payload has a standard structure.  The context serves as the subject of the door.
+A door is the most general case of a function in Hoon. It packages a core's payload with a cell of `[sample context]`; thus, they are a cell of `[battery [sample context]]`. Doors are created with `|_` barcab. That is, the payload has a standard structure. The context serves as the subject of the door.
 
 Since every door has a standard structure, you can introspect inside of the door to see how parts of it work:
 
 <!-- {% raw %} -->
+
 ```hoon
 > +1:add
 <1.vwd {{a/@ b/@} <41.mac 1.ane $141>}>
@@ -117,29 +116,30 @@ Since every door has a standard structure, you can introspect inside of the door
 > +7:add
 <41.mac 1.ane $141>
 ```
+
 <!-- {% endraw %} -->
 
-`+1:add` returns the entire door:  in this case, it actually shows a hash of the elements and the type signature of expected inputs `{a/@ b/@}`.
+`+1:add` returns the entire door: in this case, it actually shows a hash of the elements and the type signature of expected inputs `{a/@ b/@}`.
 
-`+2:add` yields the Nock formula for the door.  (Think `[battery payload]`; this is the battery.)
+`+2:add` yields the Nock formula for the door. (Think `[battery payload]`; this is the battery.)
 
-`+6:add` yields the sample, here with specific default values.  Since this is addition, we want to add from zero.  (Compare `+6:mul` in which we wish to multiply against one instead.)
+`+6:add` yields the sample, here with specific default values. Since this is addition, we want to add from zero. (Compare `+6:mul` in which we wish to multiply against one instead.)
 
-`+7:add` is the context of the payload.  Note that this will match part of the `.` current subject.
+`+7:add` is the context of the payload. Note that this will match part of the `.` current subject.
 
-These can stack:  `+6:+7:add` yields the sample of the door's context, here the Arvo version (root noun).
+These can stack: `+6:+7:add` yields the sample of the door's context, here the Arvo version (root noun).
 
-The core containing an arm is `..arm`.  Notice that `..add` and `+7:add` are the same, since the parent core and the context of standard library function `++add` are the same.  (This won't generally hold true, of course.)
+The core containing an arm is `..arm`. Notice that `..add` and `+7:add` are the same, since the parent core and the context of standard library function `++add` are the same. (This won't generally hold true, of course.)
 
-This transparent introspection is extremely powerful, and you'll often see it employed in kernel code (if not so much in userspace code).  Head is code, tail is data, that's all you have to keep track of.
+This transparent introspection is extremely powerful, and you'll often see it employed in kernel code (if not so much in userspace code). Head is code, tail is data, that's all you have to keep track of.
 
-(Gates, therefore, are special cases of doors.  See [`%~` censig](https://urbit.org/docs/reference/hoon-expressions/rune/cen/#censig) for more information.)
+(Gates, therefore, are special cases of doors. See [`%~` censig](https://urbit.org/docs/reference/hoon-expressions/rune/cen/#censig) for more information.)
 
-- Reading: [Tlon Corporation, "Doors"](https://urbit.org/docs/tutorials/hoon/hoon-school/doors/)
+- Reading: [Tlon Corporation, "Doors"](https://urbit.org/docs/hoon/hoon-school/hoon-school/doors/)
 
 ### Custom Samples
 
-How do we create a gate with a custom sample?  `|:` barcol yields a gate with a specific sample (not the default of `~`).
+How do we create a gate with a custom sample? `|:` barcol yields a gate with a specific sample (not the default of `~`).
 
 ```hoon
 ++  mul
@@ -150,7 +150,7 @@ How do we create a gate with a custom sample?  `|:` barcol yields a gate with a 
   $(a (dec a), c (add b c))
 ```
 
-Why does this matter?  Sometimes you need an accumulator against a particular starting value:
+Why does this matter? Sometimes you need an accumulator against a particular starting value:
 
 ```hoon
 > (roll `(list @ud)`~[1 2 3 4 5] mul)
@@ -161,49 +161,47 @@ Why does this matter?  Sometimes you need an accumulator against a particular st
 120
 ```
 
+## Irregular Runic Forms
 
-##  Irregular Runic Forms
-
-Runes frequently have irregular forms.  You should look up the following irregular forms on [the current Hooncard](https://github.com/natareo/hooncard/blob/master/hooncard.pdf).
+Runes frequently have irregular forms. You should look up the following irregular forms on [the current Hooncard](https://github.com/natareo/hooncard/blob/master/hooncard.pdf).
 
 - What is `~[1 2 3]` an irregular form for?
 - What is `%a^%b` an irregular form for?
 - What is `$()` an irregular form for?
 
-The `|-` barhep rune in particular bears commenting upon.  Notice that, try as you might, you can't locate an irregular form `$()` on the Hooncard.  What's actually happening is that `%=` centis is recomputing the default subject `$` as a wing with specified changes.  Closely related to `|-` is `|.` bardot, which also produces a trap but defers evaluation.
+The `|-` barhep rune in particular bears commenting upon. Notice that, try as you might, you can't locate an irregular form `$()` on the Hooncard. What's actually happening is that `%=` centis is recomputing the default subject `$` as a wing with specified changes. Closely related to `|-` is `|.` bardot, which also produces a trap but defers evaluation.
 
-Another less-than-regular form is the use of `&n` in addressing lists.  Rather than track the index of the binary tree node (as with `+n`), you can enumerate by natural list indices:
+Another less-than-regular form is the use of `&n` in addressing lists. Rather than track the index of the binary tree node (as with `+n`), you can enumerate by natural list indices:
 
 ```hoon
 > &3:~[1 2 3 4 5]
 3
 ```
 
-This doesn't work with faces (like `&a`), though, so tools like the zero-indexed [`++snag`](https://urbit.org/docs/reference/library/2b/#snag) are more helpful.  `++snag` tends to be cantankerous about types, though:
+This doesn't work with faces (like `&a`), though, so tools like the zero-indexed [`++snag`](https://urbit.org/docs/reference/library/2b/#snag) are more helpful. `++snag` tends to be cantankerous about types, though:
 
 ```hoon
 > (snag 4 `(list)`~[1 2 3 4 5])
 5
 ```
 
-
-##  Ship Management
+## Ship Management
 
 Your planet needs a bit of regular maintenance to keep things running smoothly.
 
 ### Over-the-Air Updates
 
-First off, you should keep up with over-the-air updates.  You can control these using `|ota`.  By itself, `|ota` turns updates off.  Commonly, you turn updates on from a particular sponsor with `|ota (sein:title our now our) %kids`.  (The `%kids` desk is the Clay desk on a sponsor which provides information to daughter points.)
+First off, you should keep up with over-the-air updates. You can control these using `|ota`. By itself, `|ota` turns updates off. Commonly, you turn updates on from a particular sponsor with `|ota (sein:title our now our) %kids`. (The `%kids` desk is the Clay desk on a sponsor which provides information to daughter points.)
 
-Any update has two parts:  download ("fetch") and apply ("merge").
+Any update has two parts: download ("fetch") and apply ("merge").
 
-You can check the "base hash" (deprecated but not yet replaced terminology) at [`whatsthelatestbasehash.com`](https://whatsthelatestbasehash.com).  Compare to your `%home` desk with `+trouble`.  If the base hashes match, then you have successfully fetched.
+You can check the "base hash" (deprecated but not yet replaced terminology) at [`whatsthelatestbasehash.com`](https://whatsthelatestbasehash.com). Compare to your `%home` desk with `+trouble`. If the base hashes match, then you have successfully fetched.
 
 If the base hashes match but seem not to have been applied yet, [here is a recent discussion of means to solve the issue](https://github.com/urbit/urbit/issues/3191).
 
 ### Memory Management
 
-Besides OTAs, you also need to trim excess memory usage.  Urbit allocates a 2-GB block called the loom.  Nouns can be checked for uniqueness and old chat logs etc. can be purged.
+Besides OTAs, you also need to trim excess memory usage. Urbit allocates a 2-GB block called the loom. Nouns can be checked for uniqueness and old chat logs etc. can be purged.
 
 To maintain your ship's memory layout, you should run the following every few weeks:
 
@@ -211,7 +209,7 @@ To maintain your ship's memory layout, you should run the following every few we
 |pack
 ```
 
-The event log yields the ship's current state.  If you have troubles with your ship, it is sometimes helpful to delete the current state and force the ship to play back all or some of the log.  To that end, you should _back up_ the ship's current state from time to time to prevent needing to play back millions of events.  (Keystroke-level occurrences are events.)
+The event log yields the ship's current state. If you have troubles with your ship, it is sometimes helpful to delete the current state and force the ship to play back all or some of the log. To that end, you should _back up_ the ship's current state from time to time to prevent needing to play back millions of events. (Keystroke-level occurrences are events.)
 
 I highly recommend setting up a `cron` job on your cloud instance to regularly back up the `.urb/chk` directory inside of your ship's pier.
 
@@ -239,8 +237,7 @@ Finally, take note that `|knob` can turn on or off debugging messages from vario
 
 - Optional Reading: [Tlon Corporation, "Ship Troubleshooting"](https://urbit.org/docs/tutorials/ship-troubleshooting/)
 
-
-##  A Word of Encouragement
+## A Word of Encouragement
 
 From the [Precepts](https://urbit.org/blog/precepts-discussion/):
 
